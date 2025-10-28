@@ -1,0 +1,28 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: SUT
+    network: matic
+    source:
+      address: "0x98965474EcBeC2F532F1f780ee37b0b05f77Ca55"
+      abi: ERC20
+      startBlock: 50000000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Token
+        - TokenAccount
+        - Transfer
+        - DailySnapshot
+        - HourlySnapshot
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/mappings/token.ts

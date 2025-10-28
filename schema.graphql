@@ -1,0 +1,135 @@
+# MSQ Tokens Subgraph Schema
+# Supports multiple ERC-20 tokens including proxy and mintable tokens
+
+"""
+Global token entity - one per ERC-20 contract
+Stores aggregate statistics and metadata for each token
+"""
+type Token @entity(immutable: false) {
+  id: ID!                              # Contract address (lowercase)
+  address: Bytes!                      # Contract address (bytes format)
+  symbol: String!                      # Token symbol (e.g., "SUT", "MSQ", "KWT", "P2UC")
+  name: String!                        # Token name
+  decimals: Int!                       # Decimals for display formatting
+
+  # Token characteristics
+  isProxy: Boolean!                    # Whether this is a proxy contract
+  isMintable: Boolean!                 # Whether new tokens can be minted
+  isPausable: Boolean!                 # Whether transfers can be paused
+  implementationAddress: Bytes         # Implementation contract address (for proxy tokens)
+
+  # Supply and volume metrics
+  totalSupply: BigInt!                 # Current total supply (updates on mint/burn)
+  transferCount: BigInt!               # Total number of transfer events
+  holderCount: BigInt!                 # Number of accounts with balance > 0
+  totalVolumeTransferred: BigInt!      # Cumulative volume (never decreases)
+  mintCount: BigInt!                   # Total number of mint operations
+  burnCount: BigInt!                   # Total number of burn operations
+
+  # Temporal tracking
+  deployBlock: BigInt!                 # Block where token tracking started
+  firstTransferTimestamp: BigInt       # Timestamp of first tracked transfer
+  lastTransferTimestamp: BigInt        # Timestamp of most recent transfer
+
+  # Relationships
+  accounts: [TokenAccount!]! @derivedFrom(field: "token")
+  transfers: [Transfer!]! @derivedFrom(field: "token")
+  dailySnapshots: [DailySnapshot!]! @derivedFrom(field: "token")
+}
+
+"""
+Account holdings per token
+Composite entity: one per (token, account) pair
+An account can have balances across multiple tokens
+"""
+type TokenAccount @entity(immutable: false) {
+  id: ID!                              # Composite: {tokenAddress}-{accountAddress}
+  token: Token!                        # Which token this balance is for
+  account: Bytes!                      # Account address
+  balance: BigInt!                     # Current token balance
+
+  # Activity statistics
+  transferCount: BigInt!               # Total transfers (sent + received)
+  sentCount: BigInt!                   # Number of transfers sent
+  receivedCount: BigInt!               # Number of transfers received
+
+  # Temporal tracking
+  firstTransferBlock: BigInt!          # Block of first interaction with this token
+  firstTransferTimestamp: BigInt!      # Timestamp of first interaction
+  lastTransferBlock: BigInt!           # Block of last interaction
+  lastTransferTimestamp: BigInt!       # Timestamp of last interaction
+
+  # Relationships
+  sentTransfers: [Transfer!]! @derivedFrom(field: "fromAccount")
+  receivedTransfers: [Transfer!]! @derivedFrom(field: "toAccount")
+}
+
+"""
+Transfer event record
+One entity per Transfer log emitted by token contracts
+"""
+type Transfer @entity(immutable: true) {
+  id: ID!                              # Composite: {tokenAddress}-{txHash}-{logIndex}
+  token: Token!                        # Which token was transferred
+
+  # Transfer participants
+  from: Bytes!                         # Sender address (0x0 for mint)
+  fromAccount: TokenAccount            # Sender TokenAccount entity (null for mint)
+  to: Bytes!                           # Receiver address (0x0 for burn)
+  toAccount: TokenAccount              # Receiver TokenAccount entity (null for burn)
+  amount: BigInt!                      # Amount transferred (raw, not decimals-adjusted)
+
+  # Transfer type flags
+  isMint: Boolean!                     # True if from == 0x0 (token creation)
+  isBurn: Boolean!                     # True if to == 0x0 (token destruction)
+
+  # Transaction metadata
+  transactionHash: Bytes!              # Transaction hash
+  blockNumber: BigInt!                 # Block number
+  blockTimestamp: BigInt!              # Block timestamp (seconds)
+  logIndex: BigInt!                    # Log index within transaction
+}
+
+"""
+Daily aggregated statistics per token
+Time-series data for analytics and charting
+"""
+type DailySnapshot @entity(immutable: false) {
+  id: ID!                              # Composite: {tokenAddress}-{dayTimestamp}
+  token: Token!                        # Which token these stats are for
+  date: BigInt!                        # Day start timestamp (UTC, rounded to midnight)
+
+  # Daily activity metrics
+  transferCount: BigInt!               # Number of transfers on this day
+  volumeTransferred: BigInt!           # Total volume transferred
+  uniqueSenders: BigInt!               # Unique sender addresses
+  uniqueReceivers: BigInt!             # Unique receiver addresses
+  uniqueAddresses: BigInt!             # Unique addresses (senders + receivers, deduplicated)
+
+  # Holder statistics
+  newHolders: BigInt!                  # New addresses with balance > 0
+  holderCount: BigInt!                 # Total holders at end of day
+
+  # Mint/Burn activity
+  mintCount: BigInt!                   # Number of mint operations on this day
+  burnCount: BigInt!                   # Number of burn operations on this day
+  mintVolume: BigInt!                  # Total tokens minted
+  burnVolume: BigInt!                  # Total tokens burned
+}
+
+"""
+Hourly aggregated statistics per token (optional, for high-resolution analytics)
+Can be commented out if not needed to reduce storage
+"""
+type HourlySnapshot @entity(immutable: false) {
+  id: ID!                              # Composite: {tokenAddress}-{hourTimestamp}
+  token: Token!                        # Which token these stats are for
+  hour: BigInt!                        # Hour start timestamp
+
+  transferCount: BigInt!               # Number of transfers in this hour
+  volumeTransferred: BigInt!           # Total volume transferred
+  uniqueAddresses: BigInt!             # Unique addresses active in this hour
+
+  mintCount: BigInt!                   # Number of mint operations
+  burnCount: BigInt!                   # Number of burn operations
+}
