@@ -2,14 +2,15 @@
 
 ## v0.0.3 - Multi-Token Support (2025-10-29)
 
-**Deployment Status**: ⏳ Ready to Deploy
+**Deployment Status**: ✅ Successfully Deployed
 
 **Deployment Details**:
 - **Version**: v0.0.3
-- **Build Hash**: TBD (will be generated during deployment)
-- **Deployed**: TBD
+- **Build Hash**: QmPh8y5759PRd7sDK6MpPv1fRU9Pc2m89fy3zrZXbibeDB
+- **Deployed**: 2025-10-29
 - **Studio URL**: https://thegraph.com/studio/subgraph/msq-tokens-subgraph
 - **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.3
+- **Indexing Status**: 🔄 Active (no errors)
 
 **Changes in This Version**:
 
