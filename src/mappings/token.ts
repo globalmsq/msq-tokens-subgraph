@@ -74,6 +74,8 @@ export function handleTransfer(event: TransferEvent): void {
       event.block.timestamp
     );
 
+    let previousBalance = toAccount.balance;
+
     updateAccountReceived(
       toAccount,
       amount,
@@ -81,7 +83,8 @@ export function handleTransfer(event: TransferEvent): void {
       event.block.timestamp
     );
 
-    // Note: New holders are already counted in getOrCreateTokenAccount
+    // Check if receiver became a new holder (balance went from 0 to non-zero)
+    updateHolderCount(tokenAddress, toAccount.balance, previousBalance);
   }
 
   // 4. Create Transfer entity
@@ -105,7 +108,9 @@ export function handleTransfer(event: TransferEvent): void {
     event.block.timestamp,
     amount,
     isMint,
-    isBurn
+    isBurn,
+    from,
+    to
   );
 }
 

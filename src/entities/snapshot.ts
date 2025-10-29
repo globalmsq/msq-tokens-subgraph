@@ -2,7 +2,13 @@ import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { DailySnapshot, HourlySnapshot, Token } from "../../generated/schema";
 import { ZERO_BI, ONE_BI } from "../utils/constants";
 import { generateSnapshotId, generateHourlySnapshotId } from "../utils/id-generators";
-import { addressToId, getDayStartTimestamp, getHourStartTimestamp } from "../utils/helpers";
+import {
+  addressToId,
+  getDayStartTimestamp,
+  getHourStartTimestamp,
+  arrayContainsAddress,
+  calculateUniqueAddresses
+} from "../utils/helpers";
 
 /**
  * Load or create DailySnapshot entity
@@ -47,6 +53,10 @@ export function getOrCreateDailySnapshot(
     snapshot.mintVolume = ZERO_BI;
     snapshot.burnVolume = ZERO_BI;
 
+    // Initialize address tracking arrays
+    snapshot.senderAddresses = [];
+    snapshot.receiverAddresses = [];
+
     snapshot.save();
   }
 
@@ -60,19 +70,49 @@ export function getOrCreateDailySnapshot(
  * @param amount - Amount transferred
  * @param isMint - Whether this is a mint operation
  * @param isBurn - Whether this is a burn operation
+ * @param from - Sender address
+ * @param to - Receiver address
  */
 export function updateDailySnapshot(
   tokenAddress: Address,
   timestamp: BigInt,
   amount: BigInt,
   isMint: boolean,
-  isBurn: boolean
+  isBurn: boolean,
+  from: Address,
+  to: Address
 ): void {
   let snapshot = getOrCreateDailySnapshot(tokenAddress, timestamp);
 
   // Update transfer statistics
   snapshot.transferCount = snapshot.transferCount.plus(ONE_BI);
   snapshot.volumeTransferred = snapshot.volumeTransferred.plus(amount);
+
+  // Track unique senders (if not mint)
+  if (!isMint) {
+    if (!arrayContainsAddress(snapshot.senderAddresses, from)) {
+      let senders = snapshot.senderAddresses;
+      senders.push(from);
+      snapshot.senderAddresses = senders;
+      snapshot.uniqueSenders = BigInt.fromI32(senders.length);
+    }
+  }
+
+  // Track unique receivers (if not burn)
+  if (!isBurn) {
+    if (!arrayContainsAddress(snapshot.receiverAddresses, to)) {
+      let receivers = snapshot.receiverAddresses;
+      receivers.push(to);
+      snapshot.receiverAddresses = receivers;
+      snapshot.uniqueReceivers = BigInt.fromI32(receivers.length);
+    }
+  }
+
+  // Calculate total unique addresses (senders + receivers, deduplicated)
+  snapshot.uniqueAddresses = calculateUniqueAddresses(
+    snapshot.senderAddresses,
+    snapshot.receiverAddresses
+  );
 
   // Update mint/burn statistics
   if (isMint) {

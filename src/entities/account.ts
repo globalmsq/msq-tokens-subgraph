@@ -43,12 +43,7 @@ export function getOrCreateTokenAccount(
 
     tokenAccount.save();
 
-    // Increment holder count for the token
-    let token = Token.load(addressToId(tokenAddress));
-    if (token != null) {
-      token.holderCount = token.holderCount.plus(ONE_BI);
-      token.save();
-    }
+    // Note: holderCount will be updated in updateHolderCount() when balance becomes > 0
   }
 
   return tokenAccount as TokenAccount;
@@ -120,5 +115,8 @@ export function updateHolderCount(
   }
 
   // Account went from zero to non-zero (new holder)
-  // This is already handled in getOrCreateTokenAccount
+  else if (previousBalance.equals(ZERO_BI) && accountBalance.gt(ZERO_BI)) {
+    token.holderCount = token.holderCount.plus(ONE_BI);
+    token.save();
+  }
 }

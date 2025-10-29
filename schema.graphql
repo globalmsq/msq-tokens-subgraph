@@ -115,6 +115,10 @@ type DailySnapshot @entity(immutable: false) {
   burnCount: BigInt!                   # Number of burn operations on this day
   mintVolume: BigInt!                  # Total tokens minted
   burnVolume: BigInt!                  # Total tokens burned
+
+  # Address tracking for unique count calculation
+  senderAddresses: [Bytes!]!           # Array of unique sender addresses (for deduplication)
+  receiverAddresses: [Bytes!]!         # Array of unique receiver addresses (for deduplication)
 }
 
 """
