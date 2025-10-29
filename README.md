@@ -96,10 +96,56 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
 ## 🔍 Example Queries
 
+> **Note (v0.0.4+)**: All entity IDs now use Bytes format internally for better performance. Query syntax remains the same using hex string addresses (e.g., `"0x..."`).
+
+### Get All Tokens
+```graphql
+query {
+  tokens(orderBy: symbol) {
+    id
+    symbol
+    name
+    decimals
+    totalSupply
+    holderCount
+    transferCount
+    isProxy
+    isMintable
+  }
+}
+```
+
+### Get MSQ Token Info
+```graphql
+query {
+  token(id: "0x6a8ec2d9bfbdd20a7f5a4e89d640f7e7ceba4499") {
+    symbol
+    name
+    decimals
+    totalSupply
+    holderCount
+    transferCount
+  }
+}
+```
+
 ### Get SUT Token Info
 ```graphql
 query {
   token(id: "0x98965474ecbec2f532f1f780ee37b0b05f77ca55") {
+    symbol
+    name
+    totalSupply
+    holderCount
+    transferCount
+  }
+}
+```
+
+### Multi-Token Query
+```graphql
+query {
+  tokens(where: { symbol_in: ["MSQ", "SUT", "KWT", "P2UC"] }) {
     symbol
     name
     totalSupply
