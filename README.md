@@ -7,9 +7,25 @@ A unified Graph Protocol subgraph for indexing multiple MSQ ecosystem tokens on 
 | Token | Symbol | Type | Address |
 |-------|--------|------|---------|
 | MSQUARE | MSQ | Standard ERC-20 | `0x6A8Ec2d9BfBDD20A7F5A4E89D640F7E7cebA4499` |
-| SUPER TRUST | SUT | ERC-20 + Pausable | `0x98965474EcBeC2F532F1f780ee37b0b05F77Ca55` |
+| SUPER TRUST | SUT | ERC-20 + Pausable | `0x98965474EcBeC2F532F1f780ee37b0b05F77Ca55` ✅ |
 | Korean Won Token | KWT | ERC-1967 Proxy + Mintable | `0x435001Af7fC65B621B0043df99810B2f30860c5d` |
 | Point to You Coin | P2UC | ERC-1967 Proxy | `0x8B3C6ff5911392dECB5B08611822280dEe0E4f64` |
+
+**Deployment Status**: ✅ **SUT token deployed** (v0.0.2 - Bug fixes deployed 2025-10-29)
+
+## 🚀 Live Deployment
+
+**Current Version**: v0.0.2 (2025-10-29)
+
+- **Studio Dashboard**: https://thegraph.com/studio/subgraph/msq-tokens-subgraph
+- **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.2
+- **Network**: Polygon (Chain ID: 137)
+- **Status**: 🔄 Re-syncing (Schema changes - full re-index required)
+
+**Recent Changes** (v0.0.2):
+- ✅ Fixed DailySnapshot unique address tracking (uniqueSenders, uniqueReceivers, uniqueAddresses)
+- ✅ Fixed Token.holderCount logic (now correctly counts holders)
+- 📊 See [DEPLOYMENT_LOG.md](./DEPLOYMENT_LOG.md) for details
 
 ## ✨ Features
 
@@ -65,6 +81,8 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
 - [CLAUDE.md](./CLAUDE.md) - Developer guide for working with this codebase
 - [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment instructions
+- [DEPLOYMENT_LOG.md](./DEPLOYMENT_LOG.md) - Version history and deployment log
+- [validation/reports/VALIDATION_SUMMARY.md](./validation/reports/VALIDATION_SUMMARY.md) - Validation results and bug fixes
 - [prd.md](./prd.md) - Original product requirements document
 - [claudedocs/token-analysis.md](./claudedocs/token-analysis.md) - Token analysis and comparison
 
