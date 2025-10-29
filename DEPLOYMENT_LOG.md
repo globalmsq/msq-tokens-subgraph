@@ -1,5 +1,59 @@
 # Deployment Log - MSQ Tokens Subgraph
 
+## v0.0.4 - Bytes ID Migration (2025-10-29)
+
+**Deployment Status**: ✅ Successfully Deployed
+
+**Deployment Details**:
+- **Version**: v0.0.4
+- **Build Hash**: Qma9Rprn7bfHgENKhZGu59GPGcdPeiJc1YsZWQV1cAgkbg
+- **Deployed**: 2025-10-29
+- **Studio URL**: https://thegraph.com/studio/subgraph/msq-tokens-subgraph
+- **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.4
+- **Indexing Status**: 🔄 Active (re-indexing from genesis)
+
+**Changes in This Version**:
+
+### Performance Optimization: Bytes ID Migration
+Migrated all entity IDs from `ID!` (String) to `Bytes!` for significant performance improvements following The Graph best practices.
+
+**Schema Changes**:
+- Token.id: `ID!` → `Bytes!` (direct address bytes)
+- TokenAccount.id: `ID!` → `Bytes!` (tokenAddress.concat(accountAddress))
+- Transfer.id: `ID!` → `Bytes!` (txHash.concatI32(logIndex))
+- DailySnapshot.id: `ID!` → `Bytes!` (tokenAddress.concat(timestampBytes))
+- HourlySnapshot.id: `ID!` → `Bytes!` (tokenAddress.concat(timestampBytes))
+
+**Code Changes**:
+- Rewrote `id-generators.ts` to use Bytes concatenation
+- Updated all entity files to use Bytes-based IDs
+- Removed `addressToId()` helper function (no longer needed)
+- All ID generation now uses efficient Bytes operations
+
+**Expected Performance Improvements** (based on The Graph benchmarks):
+- 🚀 28% faster query performance
+- 🚀 48% faster indexing speed
+- 💾 50% storage reduction for entity IDs
+
+**Breaking Changes**:
+⚠️ This is a **breaking change** requiring full re-indexing from genesis block.
+- All existing entities will be recreated with new Bytes-based IDs
+- GraphQL queries must now use Bytes format for entity IDs
+- Query example: `token(id: "0x6a8ec2d9bfbdd20a7f5a4e89d640f7e7ceba4499")`
+
+**Migration Notes**:
+- All 4 tokens (MSQ, SUT, KWT, P2UC) will re-index from their deployment blocks
+- Case-sensitivity issues eliminated (Bytes are always lowercase)
+- Composite IDs now use efficient Bytes concatenation instead of string interpolation
+
+**Expected Re-sync Timeline**:
+- MSQ: From Block 28,385,214 (~48% faster than v0.0.3)
+- SUT: From Block 52,882,612 (~48% faster than v0.0.3)
+- KWT: From Block 69,407,446 (~48% faster than v0.0.3)
+- P2UC: From Block 73,725,373 (~48% faster than v0.0.3)
+
+---
+
 ## v0.0.3 - Multi-Token Support (2025-10-29)
 
 **Deployment Status**: ✅ Successfully Deployed

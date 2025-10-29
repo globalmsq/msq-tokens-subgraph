@@ -11,18 +11,24 @@ A unified Graph Protocol subgraph for indexing multiple MSQ ecosystem tokens on 
 | Korean Won Token | KWT | ERC-1967 Proxy + Mintable | `0x435001Af7fC65B621B0043df99810B2f30860c5d` ✅ |
 | Point to You Coin | P2UC | ERC-1967 Proxy | `0x8B3C6ff5911392dECB5B08611822280dEe0E4f64` ✅ |
 
-**Deployment Status**: ✅ **All 4 tokens deployed** (v0.0.3 - Multi-token support 2025-10-29)
+**Deployment Status**: ✅ **All 4 tokens deployed** (v0.0.4 - Bytes ID Migration 2025-10-29)
 
 ## 🚀 Live Deployment
 
-**Current Version**: v0.0.3 (2025-10-29)
+**Current Version**: v0.0.4 (2025-10-29)
 
 - **Studio Dashboard**: https://thegraph.com/studio/subgraph/msq-tokens-subgraph
-- **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.3
+- **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.4
 - **Network**: Polygon (Chain ID: 137)
-- **Status**: 🔄 Indexing (Multi-token deployment)
+- **Status**: 🔄 Re-indexing (Performance optimization)
 
-**Recent Changes** (v0.0.3):
+**Recent Changes** (v0.0.4)**:
+- 🚀 Migrated to Bytes IDs for 28% faster queries, 48% faster indexing
+- 💾 50% storage reduction for entity IDs
+- ✅ Eliminated case-sensitivity issues with addresses
+- 📊 Full re-index from genesis for all tokens
+
+**Previous Changes** (v0.0.3):
 - ✅ Added MSQ token (Block 28,385,214)
 - ✅ Added KWT token (Block 69,407,446) - ERC-1967 Proxy + Mintable
 - ✅ Added P2UC token (Block 73,725,373) - ERC-1967 Proxy

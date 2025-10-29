@@ -1,9 +1,8 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { DailySnapshot, HourlySnapshot, Token } from "../../generated/schema";
 import { ZERO_BI, ONE_BI } from "../utils/constants";
-import { generateSnapshotId, generateHourlySnapshotId } from "../utils/id-generators";
+import { generateSnapshotId, generateHourlySnapshotId, generateTokenId } from "../utils/id-generators";
 import {
-  addressToId,
   getDayStartTimestamp,
   getHourStartTimestamp,
   arrayContainsAddress,
@@ -21,12 +20,12 @@ export function getOrCreateDailySnapshot(
   timestamp: BigInt
 ): DailySnapshot {
   let dayStartTimestamp = getDayStartTimestamp(timestamp);
-  let id = generateSnapshotId(addressToId(tokenAddress), dayStartTimestamp);
+  let id = generateSnapshotId(tokenAddress, dayStartTimestamp);
   let snapshot = DailySnapshot.load(id);
 
   if (snapshot == null) {
     snapshot = new DailySnapshot(id);
-    snapshot.token = addressToId(tokenAddress);
+    snapshot.token = generateTokenId(tokenAddress);
     snapshot.date = dayStartTimestamp;
 
     // Initialize daily metrics
@@ -40,7 +39,7 @@ export function getOrCreateDailySnapshot(
     snapshot.newHolders = ZERO_BI;
 
     // Get current holder count from Token entity
-    let token = Token.load(addressToId(tokenAddress));
+    let token = Token.load(generateTokenId(tokenAddress));
     if (token != null) {
       snapshot.holderCount = token.holderCount;
     } else {
@@ -124,7 +123,7 @@ export function updateDailySnapshot(
   }
 
   // Update holder count from Token entity
-  let token = Token.load(addressToId(tokenAddress));
+  let token = Token.load(generateTokenId(tokenAddress));
   if (token != null) {
     snapshot.holderCount = token.holderCount;
   }
@@ -143,12 +142,12 @@ export function getOrCreateHourlySnapshot(
   timestamp: BigInt
 ): HourlySnapshot {
   let hourStartTimestamp = getHourStartTimestamp(timestamp);
-  let id = generateHourlySnapshotId(addressToId(tokenAddress), hourStartTimestamp);
+  let id = generateHourlySnapshotId(tokenAddress, hourStartTimestamp);
   let snapshot = HourlySnapshot.load(id);
 
   if (snapshot == null) {
     snapshot = new HourlySnapshot(id);
-    snapshot.token = addressToId(tokenAddress);
+    snapshot.token = generateTokenId(tokenAddress);
     snapshot.hour = hourStartTimestamp;
 
     // Initialize hourly metrics

@@ -6,7 +6,7 @@ Global token entity - one per ERC-20 contract
 Stores aggregate statistics and metadata for each token
 """
 type Token @entity(immutable: false) {
-  id: ID!                              # Contract address (lowercase)
+  id: Bytes!                           # Contract address (bytes format)
   address: Bytes!                      # Contract address (bytes format)
   symbol: String!                      # Token symbol (e.g., "SUT", "MSQ", "KWT", "P2UC")
   name: String!                        # Token name
@@ -43,7 +43,7 @@ Composite entity: one per (token, account) pair
 An account can have balances across multiple tokens
 """
 type TokenAccount @entity(immutable: false) {
-  id: ID!                              # Composite: {tokenAddress}-{accountAddress}
+  id: Bytes!                           # Composite: tokenAddress.concat(accountAddress)
   token: Token!                        # Which token this balance is for
   account: Bytes!                      # Account address
   balance: BigInt!                     # Current token balance
@@ -69,7 +69,7 @@ Transfer event record
 One entity per Transfer log emitted by token contracts
 """
 type Transfer @entity(immutable: true) {
-  id: ID!                              # Composite: {tokenAddress}-{txHash}-{logIndex}
+  id: Bytes!                           # Composite: txHash.concatI32(logIndex)
   token: Token!                        # Which token was transferred
 
   # Transfer participants
@@ -95,7 +95,7 @@ Daily aggregated statistics per token
 Time-series data for analytics and charting
 """
 type DailySnapshot @entity(immutable: false) {
-  id: ID!                              # Composite: {tokenAddress}-{dayTimestamp}
+  id: Bytes!                           # Composite: tokenAddress.concat(timestampBytes)
   token: Token!                        # Which token these stats are for
   date: BigInt!                        # Day start timestamp (UTC, rounded to midnight)
 
@@ -126,7 +126,7 @@ Hourly aggregated statistics per token (optional, for high-resolution analytics)
 Can be commented out if not needed to reduce storage
 """
 type HourlySnapshot @entity(immutable: false) {
-  id: ID!                              # Composite: {tokenAddress}-{hourTimestamp}
+  id: Bytes!                           # Composite: tokenAddress.concat(timestampBytes)
   token: Token!                        # Which token these stats are for
   hour: BigInt!                        # Hour start timestamp
 

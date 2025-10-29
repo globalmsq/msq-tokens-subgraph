@@ -1,7 +1,7 @@
 import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { Transfer } from "../../generated/schema";
-import { generateTransferId, generateAccountId } from "../utils/id-generators";
-import { addressToId, isZeroAddress } from "../utils/helpers";
+import { generateTransferId, generateAccountId, generateTokenId } from "../utils/id-generators";
+import { isZeroAddress } from "../utils/helpers";
 
 /**
  * Create Transfer entity
@@ -25,14 +25,10 @@ export function createTransferEntity(
   blockTimestamp: BigInt,
   logIndex: BigInt
 ): Transfer {
-  let id = generateTransferId(
-    addressToId(tokenAddress),
-    txHash.toHexString(),
-    logIndex
-  );
+  let id = generateTransferId(txHash, logIndex);
 
   let transfer = new Transfer(id);
-  transfer.token = addressToId(tokenAddress);
+  transfer.token = generateTokenId(tokenAddress);
 
   // Transfer participants
   transfer.from = from;
@@ -48,17 +44,11 @@ export function createTransferEntity(
 
   // Link to TokenAccount entities (null for mint/burn)
   if (!isMint) {
-    transfer.fromAccount = generateAccountId(
-      addressToId(tokenAddress),
-      addressToId(from)
-    );
+    transfer.fromAccount = generateAccountId(tokenAddress, from);
   }
 
   if (!isBurn) {
-    transfer.toAccount = generateAccountId(
-      addressToId(tokenAddress),
-      addressToId(to)
-    );
+    transfer.toAccount = generateAccountId(tokenAddress, to);
   }
 
   // Transaction metadata

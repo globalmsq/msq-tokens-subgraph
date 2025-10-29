@@ -9,13 +9,6 @@ export function isZeroAddress(address: Address): boolean {
 }
 
 /**
- * Convert address to lowercase hex string
- */
-export function addressToId(address: Address): string {
-  return address.toHexString().toLowerCase();
-}
-
-/**
  * Round timestamp down to the start of the day (UTC)
  * @param timestamp - Unix timestamp in seconds
  * @returns Timestamp rounded down to midnight UTC

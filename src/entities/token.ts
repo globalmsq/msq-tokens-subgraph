@@ -2,7 +2,7 @@ import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { Token } from "../../generated/schema";
 import { getTokenConfig } from "../utils/constants";
 import { ZERO_BI } from "../utils/constants";
-import { addressToId } from "../utils/helpers";
+import { generateTokenId } from "../utils/id-generators";
 
 /**
  * Load or create Token entity
@@ -16,12 +16,12 @@ export function getOrCreateToken(
   block: BigInt,
   timestamp: BigInt
 ): Token {
-  let id = addressToId(address);
+  let id = generateTokenId(address);
   let token = Token.load(id);
 
   if (token == null) {
     // Load token configuration
-    let config = getTokenConfig(id);
+    let config = getTokenConfig(address.toHexString());
 
     token = new Token(id);
     token.address = address;

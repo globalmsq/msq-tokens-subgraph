@@ -1,8 +1,7 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { TokenAccount, Token } from "../../generated/schema";
 import { ZERO_BI, ONE_BI } from "../utils/constants";
-import { generateAccountId } from "../utils/id-generators";
-import { addressToId } from "../utils/helpers";
+import { generateAccountId, generateTokenId } from "../utils/id-generators";
 
 /**
  * Load or create TokenAccount entity
@@ -18,15 +17,12 @@ export function getOrCreateTokenAccount(
   block: BigInt,
   timestamp: BigInt
 ): TokenAccount {
-  let id = generateAccountId(
-    addressToId(tokenAddress),
-    addressToId(accountAddress)
-  );
+  let id = generateAccountId(tokenAddress, accountAddress);
   let tokenAccount = TokenAccount.load(id);
 
   if (tokenAccount == null) {
     tokenAccount = new TokenAccount(id);
-    tokenAccount.token = addressToId(tokenAddress);
+    tokenAccount.token = generateTokenId(tokenAddress);
     tokenAccount.account = accountAddress;
     tokenAccount.balance = ZERO_BI;
 
@@ -103,7 +99,7 @@ export function updateHolderCount(
   accountBalance: BigInt,
   previousBalance: BigInt
 ): void {
-  let token = Token.load(addressToId(tokenAddress));
+  let token = Token.load(generateTokenId(tokenAddress));
   if (token == null) {
     return;
   }
