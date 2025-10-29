@@ -6,25 +6,27 @@ A unified Graph Protocol subgraph for indexing multiple MSQ ecosystem tokens on 
 
 | Token | Symbol | Type | Address |
 |-------|--------|------|---------|
-| MSQUARE | MSQ | Standard ERC-20 | `0x6A8Ec2d9BfBDD20A7F5A4E89D640F7E7cebA4499` |
+| MSQUARE | MSQ | Standard ERC-20 | `0x6A8Ec2d9BfBDD20A7F5A4E89D640F7E7cebA4499` ✅ |
 | SUPER TRUST | SUT | ERC-20 + Pausable | `0x98965474EcBeC2F532F1f780ee37b0b05F77Ca55` ✅ |
-| Korean Won Token | KWT | ERC-1967 Proxy + Mintable | `0x435001Af7fC65B621B0043df99810B2f30860c5d` |
-| Point to You Coin | P2UC | ERC-1967 Proxy | `0x8B3C6ff5911392dECB5B08611822280dEe0E4f64` |
+| Korean Won Token | KWT | ERC-1967 Proxy + Mintable | `0x435001Af7fC65B621B0043df99810B2f30860c5d` ✅ |
+| Point to You Coin | P2UC | ERC-1967 Proxy | `0x8B3C6ff5911392dECB5B08611822280dEe0E4f64` ✅ |
 
-**Deployment Status**: ✅ **SUT token deployed** (v0.0.2 - Bug fixes deployed 2025-10-29)
+**Deployment Status**: ✅ **All 4 tokens deployed** (v0.0.3 - Multi-token support 2025-10-29)
 
 ## 🚀 Live Deployment
 
-**Current Version**: v0.0.2 (2025-10-29)
+**Current Version**: v0.0.3 (2025-10-29)
 
 - **Studio Dashboard**: https://thegraph.com/studio/subgraph/msq-tokens-subgraph
-- **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.2
+- **Query Endpoint**: https://api.studio.thegraph.com/query/1704765/msq-tokens-subgraph/v0.0.3
 - **Network**: Polygon (Chain ID: 137)
-- **Status**: 🔄 Re-syncing (Schema changes - full re-index required)
+- **Status**: 🔄 Indexing (Multi-token deployment)
 
-**Recent Changes** (v0.0.2):
-- ✅ Fixed DailySnapshot unique address tracking (uniqueSenders, uniqueReceivers, uniqueAddresses)
-- ✅ Fixed Token.holderCount logic (now correctly counts holders)
+**Recent Changes** (v0.0.3):
+- ✅ Added MSQ token (Block 28,385,214)
+- ✅ Added KWT token (Block 69,407,446) - ERC-1967 Proxy + Mintable
+- ✅ Added P2UC token (Block 73,725,373) - ERC-1967 Proxy
+- ✅ Updated all deployment blocks with accurate values
 - 📊 See [DEPLOYMENT_LOG.md](./DEPLOYMENT_LOG.md) for details
 
 ## ✨ Features
