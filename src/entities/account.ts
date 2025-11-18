@@ -2,6 +2,7 @@ import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { TokenAccount, Token } from "../../generated/schema";
 import { ZERO_BI, ONE_BI } from "../utils/constants";
 import { generateAccountId, generateTokenId } from "../utils/id-generators";
+import { updateUniqueTokenCount, getOrCreateAccountStats } from "./accountStats";
 
 /**
  * Load or create TokenAccount entity
@@ -37,7 +38,14 @@ export function getOrCreateTokenAccount(
     tokenAccount.lastTransferBlock = block;
     tokenAccount.lastTransferTimestamp = timestamp;
 
+    // Link to AccountStats for cross-token analytics
+    let accountStats = getOrCreateAccountStats(accountAddress, timestamp);
+    tokenAccount.accountStats = accountStats.id;
+
     tokenAccount.save();
+
+    // Update cross-token AccountStats - increment unique token count
+    updateUniqueTokenCount(accountAddress, timestamp);
 
     // Note: holderCount will be updated in updateHolderCount() when balance becomes > 0
   }

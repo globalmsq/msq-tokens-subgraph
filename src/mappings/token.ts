@@ -11,6 +11,10 @@ import {
   updateAccountReceived,
   updateHolderCount
 } from "../entities/account";
+import {
+  updateAccountStatsSent,
+  updateAccountStatsReceived
+} from "../entities/accountStats";
 import { createTransferEntity } from "../entities/transfer";
 import { updateDailySnapshot } from "../entities/snapshot";
 import { isZeroAddress } from "../utils/helpers";
@@ -63,6 +67,9 @@ export function handleTransfer(event: TransferEvent): void {
 
     // Check if sender balance went to zero (no longer a holder)
     updateHolderCount(tokenAddress, fromAccount.balance, previousBalance);
+
+    // Update cross-token AccountStats for sender
+    updateAccountStatsSent(from, amount, event.block.timestamp);
   }
 
   // 3. Handle receiver (skip if burn)
@@ -85,6 +92,9 @@ export function handleTransfer(event: TransferEvent): void {
 
     // Check if receiver became a new holder (balance went from 0 to non-zero)
     updateHolderCount(tokenAddress, toAccount.balance, previousBalance);
+
+    // Update cross-token AccountStats for receiver
+    updateAccountStatsReceived(to, amount, event.block.timestamp);
   }
 
   // 4. Create Transfer entity

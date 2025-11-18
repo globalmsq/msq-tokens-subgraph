@@ -20,6 +20,7 @@ dataSources:
         - Transfer
         - DailySnapshot
         - HourlySnapshot
+        - AccountStats
       abis:
         - name: ERC20
           file: ./abis/ERC20.json
@@ -46,6 +47,7 @@ dataSources:
         - Transfer
         - DailySnapshot
         - HourlySnapshot
+        - AccountStats
       abis:
         - name: ERC20
           file: ./abis/ERC20.json
@@ -72,6 +74,7 @@ dataSources:
         - Transfer
         - DailySnapshot
         - HourlySnapshot
+        - AccountStats
       abis:
         - name: ERC20
           file: ./abis/ERC20.json
@@ -98,6 +101,7 @@ dataSources:
         - Transfer
         - DailySnapshot
         - HourlySnapshot
+        - AccountStats
       abis:
         - name: ERC20
           file: ./abis/ERC20.json

@@ -60,6 +60,7 @@ type TokenAccount @entity(immutable: false) {
   lastTransferTimestamp: BigInt!       # Timestamp of last interaction
 
   # Relationships
+  accountStats: AccountStats!          # Cross-token statistics for this account
   sentTransfers: [Transfer!]! @derivedFrom(field: "fromAccount")
   receivedTransfers: [Transfer!]! @derivedFrom(field: "toAccount")
 }
@@ -136,4 +137,31 @@ type HourlySnapshot @entity(immutable: false) {
 
   mintCount: BigInt!                   # Number of mint operations
   burnCount: BigInt!                   # Number of burn operations
+}
+
+"""
+Cross-token account statistics
+Aggregates account activity across all MSQ ecosystem tokens (MSQ, SUT, KWT, P2UC)
+Enables efficient historical data retrieval without RPC rate limits
+"""
+type AccountStats @entity(immutable: false) {
+  id: Bytes!                           # Account address (bytes format)
+  account: Bytes!                      # Account address
+
+  # Aggregate transaction counts across all tokens
+  totalTransferCount: BigInt!          # Total number of transfers (sent + received)
+  totalSentCount: BigInt!              # Total number of transfers sent
+  totalReceivedCount: BigInt!          # Total number of transfers received
+  totalVolumeTransferred: BigInt!      # Cumulative volume transferred (all tokens combined, raw values)
+
+  # Temporal tracking
+  firstTransactionTimestamp: BigInt!   # Timestamp of first transaction across all tokens
+  lastTransactionTimestamp: BigInt!    # Timestamp of most recent transaction
+
+  # Activity analysis (calculated values)
+  isActive: Boolean!                   # Active in last 30 days (86400 * 30 seconds)
+  uniqueTokenCount: BigInt!            # Number of different tokens interacted with
+
+  # Relationships - per-token balances and activity
+  tokenBalances: [TokenAccount!]! @derivedFrom(field: "accountStats")
 }
