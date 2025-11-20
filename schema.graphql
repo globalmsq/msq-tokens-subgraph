@@ -144,7 +144,7 @@ Cross-token account statistics
 Aggregates account activity across all MSQ ecosystem tokens (MSQ, SUT, KWT, P2UC)
 Enables efficient historical data retrieval without RPC rate limits
 """
-type AccountStats @entity(immutable: false) {
+type AccountStats @entity(immutable: false) @queryFields(singular: "accountStat", plural: "accountStats") {
   id: Bytes!                           # Account address (bytes format)
   account: Bytes!                      # Account address
 
